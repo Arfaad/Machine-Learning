@@ -1,0 +1,74 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+import time
+import logging
+
+# Setup logging to track script activity
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+
+# Define the base URL for OYO hotel listings and the output file name
+BASE_URL = "https://www.oyorooms.com/hotels-in-bangalore/?page={page}"
+OUTPUT_FILE = "oyo_bangalore_hotels.csv"
+
+# Function to scrape hotel data from a given page URL
+def scrape_oyo(page_url):
+    try:
+        # Send an HTTP GET request to the page URL
+        response = requests.get(page_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+        # Raise an exception if the request failed
+        response.raise_for_status()
+
+        # Parse the page content using BeautifulSoup
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        hotels = []  # Initialize an empty list to store hotel data
+
+        # Find all hotel cards on the page
+        for card in soup.find_all("div", class_="oyo-row"):
+            # Extract the hotel name
+            name = card.find("h3", class_="listingHotelDescription__hotelName")
+
+            # Extract the hotel price
+            price = card.find("span", class_="listingPrice__finalPrice")
+
+            # Extract the hotel rating
+            rating = card.find("span", class_="hotelRating__ratingSummary")
+
+            # Append the hotel data to the list, using default values if data is missing
+            hotels.append((
+                name.get_text(strip=True) if name else "No Name",  # Default to "No Name" if not found
+                price.get_text(strip=True) if price else "No Price",  # Default to "No Price" if not found
+                rating.get_text(strip=True) if rating else "No Rating"  # Default to "No Rating" if not found
+            ))
+
+        return hotels  # Return the list of hotels
+
+    except Exception as e:
+        # Log an error message if scraping fails for the page
+        logging.error(f"Failed to scrape {page_url}: {e}")
+        return []  # Return an empty list in case of failure
+
+# Main script execution starts here
+if __name__ == "__main__":
+    logging.info("Starting scraping for OYO hotels in Bangalore...")
+
+    # Open the CSV file for writing data
+    with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)  # Initialize a CSV writer
+        writer.writerow(["Hotel Name", "Price", "Rating"])  # Write the header row
+
+        # Loop through the first 5 pages of the website
+        for page in range(1, 6):
+            logging.info(f"Scraping page {page}...")  # Log the current page being scraped
+
+            # Scrape the data from the current page
+            hotels = scrape_oyo(BASE_URL.format(page=page))
+
+            # Write the scraped hotel data to the CSV file
+            writer.writerows(hotels)
+
+            # Add a delay to avoid overwhelming the server
+            time.sleep(2)
+
+    logging.info(f"Data saved to {OUTPUT_FILE}")  # Log completion of data saving
