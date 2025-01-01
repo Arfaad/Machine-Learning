@@ -1,0 +1,28 @@
+Aim: To develop a Python-based web scraping script to extract hotel information (name, price, and rating) from the OYO Rooms website for Bangalore and save the data into a CSV file.
+
+
+Algorithm:
+* Import required libraries: requests, BeautifulSoup, csv, time, and logging.
+* Identify the URL pattern for pagination.
+* Send an HTTP GET request to the target page.
+* Parse the HTML content using BeautifulSoup.
+* Locate relevant HTML tags and classes for hotel name, price, and rating. 
+* Extract and clean the data.
+* Use default values ("No Name", "No Price", "No Rating") if specific fields are unavailable.
+* Write the extracted data to a CSV file with headers.
+* Repeat the process for multiple pages with pagination.
+* Introduce a delay between requests to avoid overwhelming the server.
+* Log successes and failures for each page.
+* Save and review the CSV file.
+
+
+Dataset:
+The dataset consists of hotel information scraped from the OYO Rooms website. Each entry contains:
+Hotel Name: Name of the hotel.
+Price: Final price listed for the hotel.
+Rating: User rating of the hotel.
+
+
+program here...
+
+Result: The script successfully scraped hotel data from the OYO Rooms website for Bangalore. The data was stored in a CSV file, which can be used for analysis, visualization, or decision-making.
