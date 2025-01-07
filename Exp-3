@@ -1,0 +1,32 @@
+from sklearn.neighbors import KNeighborsClassifier
+import pandas as pd
+import numpy as np
+
+# Dataset: Students with performance data
+data = {
+    'Student': ['Student1', 'Student2', 'Student3', 'Student4', 'Student5'],
+    'Scores': [85, 78, 92, 70, 88],
+    'Attendance': [90, 85, 95, 80, 88],
+    'Study_Hours': [15, 12, 18, 10, 14]
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Features and labels
+X = df[['Scores', 'Attendance', 'Study_Hours']]
+y = df['Student']
+
+# Input student characteristics to find the closest match
+input_data = pd.DataFrame([[80, 87, 13]], columns=['Scores', 'Attendance', 'Study_Hours'])  # Example input
+
+# Initialize and train the k-NN model
+k = 3  # Number of neighbors
+knn = KNeighborsClassifier(n_neighbors=k)
+knn.fit(X, y)
+
+# Predict the closest match
+predicted_student = knn.predict(input_data)
+
+print("Input Characteristics:", input_data.values)
+print("Closest Student:", predicted_student[0])
