@@ -1,0 +1,54 @@
+# Import required libraries
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Create a new dataset
+data = {
+    'Study Hours': [5, 3, 8, 2, 6, 1, 7, 4, 9, 3],
+    'Attendance': [90, 75, 95, 60, 85, 50, 92, 70, 98, 65],
+    'Online Resources Used': [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+    'Previous Grades': [85, 60, 90, 55, 80, 50, 88, 65, 95, 58],
+    'Outcome': ['Pass', 'Fail', 'Pass', 'Fail', 'Pass', 'Fail', 'Pass', 'Fail', 'Pass', 'Fail']
+}
+
+# Convert data to DataFrame
+df = pd.DataFrame(data)
+
+# Encode the categorical target variable
+# Map 'Pass' to 1 and 'Fail' to 0
+df['Outcome'] = df['Outcome'].map({'Pass': 1, 'Fail': 0})
+
+# Features and target
+X = df[['Study Hours', 'Attendance', 'Online Resources Used', 'Previous Grades']]
+y = df['Outcome']
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Create and train the Decision Tree model
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+# Visualize the Decision Tree
+plt.figure(figsize=(12, 8))
+plot_tree(model, feature_names=X.columns, class_names=['Fail', 'Pass'], filled=True)
+plt.title("Decision Tree for Student Exam Outcome")
+plt.show()
+
+# Test with a new example
+new_data = pd.DataFrame([[7, 85, 1, 88]], columns=['Study Hours', 'Attendance', 'Online Resources Used', 'Previous Grades'])
+predicted_outcome = model.predict(new_data)
+print("Predicted Outcome (1=Pass, 0=Fail):", predicted_outcome[0])
+
+
+now this program
