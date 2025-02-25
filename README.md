@@ -1,2 +1,1 @@
-KARE University's
-Machine Learning LAB Experiments
+Machine Learning codes conceptual
