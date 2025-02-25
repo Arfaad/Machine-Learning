@@ -1,0 +1,48 @@
+-import pandas as pd
+import numpy as np
+from sklearn_extra.cluster import KMedoids
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 1: Load the dataset (Customer Segmentation example)
+data = {
+    "Customer": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10"],
+    "Annual_Income": [60, 85, 75, 20, 95, 40, 120, 55, 70, 30],
+    "Spending_Score": [50, 80, 65, 30, 90, 40, 95, 55, 60, 35],
+    "Age": [25, 45, 32, 22, 50, 27, 60, 29, 33, 24]
+}
+
+df = pd.DataFrame(data)
+
+# Step 2: Select features for clustering
+features = df[["Annual_Income", "Spending_Score", "Age"]]
+
+# Step 3: Standardize the features
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform(features)
+
+# Step 4: Apply K-Medoids clustering
+kmedoids = KMedoids(n_clusters=3, random_state=42, method='pam')
+df['Cluster'] = kmedoids.fit_predict(scaled_features)
+
+# Step 5: Visualize the results
+plt.figure(figsize=(8, 6))
+sns.scatterplot(
+    x=df['Annual_Income'],
+    y=df['Spending_Score'],
+    hue=df['Cluster'],
+    palette='Set1',
+    s=100
+)
+plt.title("K-Medoids Clustering of Customers")
+plt.xlabel("Annual Income")
+plt.ylabel("Spending Score")
+plt.legend(title="Cluster")
+plt.show()
+
+# Step 6: Output cluster assignments
+print("Cluster Centers (Medoids):")
+print(df.iloc[kmedoids.medoid_indices_])
+print("\nCluster Assignments:")
+print(df)
