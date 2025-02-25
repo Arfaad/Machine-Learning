@@ -1,0 +1,57 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import fetch_openml
+from sklearn.preprocessing import StandardScaler
+
+# Step 1: Load the Fashion-MNIST dataset
+fashion_mnist = fetch_openml('Fashion-MNIST', version=1, as_frame=False)
+X, y = fashion_mnist.data, fashion_mnist.target
+
+# Convert target to numeric
+y = y.astype(int)
+
+# Normalize the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 2: Visualize the original data (first 10 images)
+fig, axes = plt.subplots(1, 10, figsize=(15, 4))
+for i, ax in enumerate(axes):
+    ax.imshow(X[i].reshape(28, 28), cmap='gray')
+    ax.set_title(f"Label: {y[i]}")
+    ax.axis('off')
+plt.suptitle("Original Fashion Items")
+plt.show()
+
+# Step 3: Apply PCA for dimensionality reduction
+pca = PCA(n_components=50)  # Reduce to 50 principal components
+X_pca = pca.fit_transform(X_scaled)
+
+print(f"Original dimensions: {X_scaled.shape}")
+print(f"Reduced dimensions: {X_pca.shape}")
+
+# Step 4: Visualize the reduced dimensions using the first two principal components
+plt.figure(figsize=(10, 7))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='tab10', s=1, alpha=0.7)
+plt.colorbar(label="Fashion Item Label")
+plt.title("2D Visualization of Fashion Items using PCA")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.show()
+
+# Step 5: Reconstruct images from reduced dimensions
+X_reconstructed = pca.inverse_transform(X_pca)
+
+# Visualize reconstructed images
+fig, axes = plt.subplots(1, 10, figsize=(15, 4))
+for i, ax in enumerate(axes):
+    ax.imshow(X_reconstructed[i].reshape(28, 28), cmap='gray')
+    ax.set_title(f"Label: {y[i]}")
+    ax.axis('off')
+plt.suptitle("Reconstructed Fashion Items")
+plt.show()
+
+# Explained variance ratio
+explained_variance = pca.explained_variance_ratio_
+print(f"Explained variance by first 50 components: {sum(explained_variance) * 100:.2f}%")
