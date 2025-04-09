@@ -5,7 +5,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix
 
-# Step 1: Create a dataset (example dataset)
+# Step 1: Create a dataset
 data = {
     "Study_Hours": [5, 10, 3, 8, 6, 9, 2, 7, 4, 12],
     "Sleep_Hours": [6, 7, 5, 8, 7, 6, 4, 7, 5, 8],
@@ -17,36 +17,41 @@ data = {
 df = pd.DataFrame(data)
 
 # Step 2: Preprocess the data
-# Encode the target variable (Result)
 label_encoder = LabelEncoder()
-df["Result"] = label_encoder.fit_transform(df["Result"])
+df["Result"] = label_encoder.fit_transform(df["Result"])  # Pass=1, Fail=0
 
-# Separate features and target variable
+# Separate features and target
 X = df.drop("Result", axis=1)
 y = df["Result"]
 
-# Normalize numerical features
+# Normalize features
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Split into train and test sets
+# Train-test split
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
 
-# Step 3: Train the SVM model
+# Step 3: Train SVM model
 svm_model = SVC(kernel="rbf", random_state=42)
 svm_model.fit(X_train, y_train)
 
 # Step 4: Evaluate the model
 y_pred = svm_model.predict(X_test)
+
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
+
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred, target_names=label_encoder.classes_))
 
-# Step 5: Make a prediction for a new student
-new_student_df = pd.DataFrame(new_student, columns=X.columns)  # Ensure feature names match
+# Step 5: Predict new student result
+# Example: [Study_Hours, Sleep_Hours, Attendance, Past_Performance]
+new_student = [[7, 7, 90, 80]]  # Define new student input
+
+new_student_df = pd.DataFrame(new_student, columns=X.columns)
 new_student_scaled = scaler.transform(new_student_df)
 
 predicted_result = svm_model.predict(new_student_scaled)
 predicted_label = label_encoder.inverse_transform(predicted_result)
+
 print("\nPredicted Result for New Student:", predicted_label[0])
