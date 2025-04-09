@@ -49,6 +49,3 @@ plt.show()
 new_data = pd.DataFrame([[7, 85, 1, 88]], columns=['Study Hours', 'Attendance', 'Online Resources Used', 'Previous Grades'])
 predicted_outcome = model.predict(new_data)
 print("Predicted Outcome (1=Pass, 0=Fail):", predicted_outcome[0])
-
-
-now this program
