@@ -4,10 +4,8 @@ import numpy as np
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
-import matplotlib.pyplot as plt
 
 # Create a dataset
-# Predict whether a person is likely to purchase a product based on age, income, and online activity
 data = {
     'Age': [22, 25, 47, 52, 46, 56, 21, 23, 57, 48],
     'Income': [20000, 25000, 47000, 52000, 46000, 56000, 21000, 23000, 57000, 48000],
@@ -18,18 +16,17 @@ data = {
 # Convert the data into a DataFrame
 df = pd.DataFrame(data)
 
-# Encode categorical target variable
-# Map 'Yes' to 1 and 'No' to 0
+# Encode the target variable
 df['Purchased'] = df['Purchased'].map({'Yes': 1, 'No': 0})
 
-# Features and target
+# Define features and target
 X = df[['Age', 'Income', 'Online Activity (hours/week)']]
 y = df['Purchased']
 
-# Split the dataset into training and testing sets
+# Split dataset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# Create and train the Naive Bayes model
+# Train the model
 model = GaussianNB()
 model.fit(X_train, y_train)
 
@@ -41,17 +38,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
 print("Classification Report:\n", classification_report(y_test, y_pred))
 
-# Visualize the results
-plt.figure(figsize=(10, 6))
-plt.scatter(df['Age'], df['Income'], c=df['Purchased'], cmap='viridis', label='Actual')
-plt.xlabel('Age')
-plt.ylabel('Income')
-plt.title('K-Means Clustering')
-plt.colorbar(label='Purchased (0=No, 1=Yes)')
-plt.legend()
-plt.show()
-
-# Test with a new example
+# Predict for new data
 new_data = pd.DataFrame([[30, 30000, 18]], columns=['Age', 'Income', 'Online Activity (hours/week)'])
 predicted_outcome = model.predict(new_data)
 print("Predicted Outcome (1=Yes, 0=No):", predicted_outcome[0])
